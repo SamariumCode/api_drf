@@ -10,7 +10,11 @@ from .serializers import ProductSerializer
 
 @api_view()
 def product_list(request):
-    return Response('Hi')
+    queryset = Product.objects.filter(name__istartswith='S')
+
+    serializer = ProductSerializer(queryset, many=True)
+
+    return Response(serializer.data)
 
 
 @api_view()
