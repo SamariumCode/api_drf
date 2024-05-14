@@ -15,22 +15,20 @@ class ProductSerializer(serializers.ModelSerializer):
     price = serializers.DecimalField(
         max_digits=6, decimal_places=2, source='unit_price')
 
-    unit_price_after_tax = serializers.SerializerMethodField(
-        method_name='calculate_tax')
-
-    category = serializers.HyperlinkedRelatedField(
-
-        queryset=Category.objects.all(),
-        view_name='category-detail',
-    )
-
-    # category = CategorySerializer()
+    unit_price_after_tax = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
-        fields = ['id', 'title', 'price', 'inventory',
+        fields = ['id', 'title', 'price',
                   'category', 'unit_price_after_tax']
-        # fields = '__all__'
 
-    def calculate_tax(self, product: Product):
+    def get_unit_price_after_tax(self, product: Product):
         return round(product.unit_price * Decimal(1.09), 2)
+
+    def validate(self, data):
+
+        if len(data['name']) < 6:
+            raise serializers.ValidationError(
+                'Product Title length shod be at least sex')
+
+        return data
