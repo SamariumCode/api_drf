@@ -19,20 +19,21 @@ def product_list(request):
     return Response(serializer.data)
 
 
-@api_view()
+@api_view(['GET', 'POST'])
 def product_detail(request, pk):
 
-    product = get_object_or_404(
-        Product.objects.select_related('category'), pk=pk)
+    if request.method == 'GET':
 
-    # try:
-    #     product = Product.objects.get(pk=pk)
-    # except Product.DoesNotExist:
-    #     return Response(status=status.HTTP_404_NOT_FOUND)  # Not Found
+        product = get_object_or_404(
+            Product.objects.select_related('category'), pk=pk)
 
-    serializer = ProductSerializer(
-        product, context={'request': request})  # convert to json
-    return Response(serializer.data)
+        serializer = ProductSerializer(
+            product, context={'request': request})  # convert to json
+        return Response(serializer.data)
+
+    elif request.method == 'POST':
+        serializer = ProductSerializer(data=request.data)
+        return Response('All OK')
 
 
 @api_view()
