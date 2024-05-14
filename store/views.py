@@ -10,7 +10,8 @@ from .serializers import ProductSerializer
 
 @api_view()
 def product_list(request):
-    queryset = Product.objects.filter(name__istartswith='S')
+    queryset = Product.objects.filter(
+        name__istartswith='S').select_related('category')
 
     serializer = ProductSerializer(queryset, many=True)
 
@@ -20,7 +21,8 @@ def product_list(request):
 @api_view()
 def product_detail(request, pk):
 
-    product = get_object_or_404(Product, pk=pk)
+    product = get_object_or_404(
+        Product.objects.select_related('category'), pk=pk)
 
     # try:
     #     product = Product.objects.get(pk=pk)

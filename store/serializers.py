@@ -1,10 +1,7 @@
 from decimal import Decimal
 from rest_framework import serializers
 
-from store.models import Product
-
-
-DOLLORS_TO_RIALS = 500000
+from store.models import Category, Product
 
 
 class ProductSerializer(serializers.Serializer):
@@ -17,11 +14,13 @@ class ProductSerializer(serializers.Serializer):
         method_name='calculate_tax')
     inventory = serializers.IntegerField()
 
-    # Custom Method Field
-    price_rials = serializers.SerializerMethodField()
+    # category = serializers.PrimaryKeyRelatedField(
+    #     queryset=Category.objects.all()
+    # )
 
-    def get_price_rials(self, product: Product):
-        return int(product.unit_price * DOLLORS_TO_RIALS)
+    category = serializers.StringRelatedField()
+
+    # Custom Method Field
 
     def calculate_tax(self, product: Product):
         return round(product.unit_price * Decimal(1.09), 2)
