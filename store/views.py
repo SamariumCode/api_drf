@@ -11,7 +11,7 @@ from .serializers import ProductSerializer, CategorySerializer
 @api_view()
 def product_list(request):
     queryset = Product.objects.filter(
-        name__istartswith='S').select_related('category')
+        name__istartswith='S').select_related('category').prefetch_related('discounts')
 
     serializer = ProductSerializer(
         queryset, many=True, context={'request': request})
