@@ -23,7 +23,12 @@ class ProductSerializer(serializers.Serializer):
     #     queryset=Category.objects.all()
     # )
 
-    category = CategorySerializer()
+    # category = CategorySerializer()
+    category = serializers.HyperlinkedRelatedField(
+
+        queryset=Category.objects.all(),
+        view_name='category-detail',
+    )
 
     # Custom Method Field
 

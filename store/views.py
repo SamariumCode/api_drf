@@ -4,8 +4,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-from .models import Product
-from .serializers import ProductSerializer
+from .models import Category, Product
+from .serializers import ProductSerializer, CategorySerializer
 
 
 @api_view()
@@ -13,7 +13,8 @@ def product_list(request):
     queryset = Product.objects.filter(
         name__istartswith='S').select_related('category')
 
-    serializer = ProductSerializer(queryset, many=True)
+    serializer = ProductSerializer(
+        queryset, many=True, context={'request': request})
 
     return Response(serializer.data)
 
@@ -29,5 +30,15 @@ def product_detail(request, pk):
     # except Product.DoesNotExist:
     #     return Response(status=status.HTTP_404_NOT_FOUND)  # Not Found
 
-    serializer = ProductSerializer(product)  # convert to json
+    serializer = ProductSerializer(
+        product, context={'request': request})  # convert to json
+    return Response(serializer.data)
+
+
+@api_view()
+def category_detail(request, pk):
+    category = get_object_or_404(Category, pk=pk)
+
+    serializer = CategorySerializer(category)
+
     return Response(serializer.data)
