@@ -33,6 +33,16 @@ def product_detail(request, pk):
 
     elif request.method == 'POST':
         serializer = ProductSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.validated_data
+        Response('Everything is OK')
+
+        # if serializer.is_valid():
+        #     serializer.validated_data
+        #     Response('Everything is OK')
+        # else:
+        #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
         return Response('All OK')
 
 
