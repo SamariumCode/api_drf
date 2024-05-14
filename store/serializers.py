@@ -4,6 +4,11 @@ from rest_framework import serializers
 from store.models import Category, Product
 
 
+class CategorySerializer(serializers.Serializer):
+    title = serializers.CharField(max_length=255)
+    description = serializers.CharField(max_length=500)
+
+
 class ProductSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     name = serializers.CharField(max_length=255)
@@ -18,7 +23,7 @@ class ProductSerializer(serializers.Serializer):
     #     queryset=Category.objects.all()
     # )
 
-    category = serializers.StringRelatedField()
+    category = CategorySerializer()
 
     # Custom Method Field
 
