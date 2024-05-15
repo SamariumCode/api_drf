@@ -5,9 +5,16 @@ from rest_framework import serializers
 from store.models import Category, Product
 
 
-class CategorySerializer(serializers.Serializer):
-    title = serializers.CharField(max_length=255)
-    description = serializers.CharField(max_length=500)
+class CategorySerializer(serializers.ModelSerializer):
+
+    count_category = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Category
+        fields = ['id', 'title', 'description', 'count_category']
+
+    def get_count_category(self, category: Category):
+        return category.products_count
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -44,6 +51,3 @@ class ProductSerializer(serializers.ModelSerializer):
 
         # Call the parent class's 'create' method to save the object
         return super().create(validated_data)
-
-
-    
