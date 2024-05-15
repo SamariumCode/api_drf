@@ -1,4 +1,5 @@
 from decimal import Decimal
+from django.utils.text import slugify
 from rest_framework import serializers
 
 from store.models import Category, Product
@@ -21,6 +22,7 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = ['id', 'title', 'price',
                   'category', 'unit_price_after_tax', 'inventory', 'slug', 'description']
+        read_only_fields = ['slug']  # Make slug read-only
 
     def get_unit_price_after_tax(self, product: Product):
         return round(product.unit_price * Decimal(1.09), 2)
@@ -32,3 +34,20 @@ class ProductSerializer(serializers.ModelSerializer):
                 'Product Title length shod be at least sex')
 
         return data
+
+    def create(self, validated_data):
+        # Retrieve the value of the 'name' field from validated_data
+        name = validated_data.get('name')
+
+        # Generate a slug (URL-friendly version) from her own name
+        validated_data['slug'] = slugify(name)
+
+        # Call the parent class's 'create' method to save the object
+        return super().create(validated_data)
+
+    # product = Product(**validated_data)
+
+    # print(product)
+    # # product.slug = slugify(product.name)
+    # # product.save()
+    # # return product
