@@ -8,34 +8,32 @@ from .models import Category, Product
 from .serializers import ProductSerializer, CategorySerializer
 
 
-@api_view()
-def product_list(request):
-    queryset = Product.objects.filter(
-        name__istartswith='S').select_related('category').prefetch_related('discounts')
-
-    serializer = ProductSerializer(
-        queryset, many=True, context={'request': request})
-
-    return Response(serializer.data)
-
-
 @api_view(['GET', 'POST'])
-def product_detail(request, pk):
-
+def product_list(request):
     if request.method == 'GET':
-
-        product = get_object_or_404(
-            Product.objects.select_related('category'), pk=pk)
+        queryset = Product.objects.filter(
+            name__istartswith='S').select_related('category').prefetch_related('discounts')
 
         serializer = ProductSerializer(
-            product, context={'request': request})  # convert to json
-        return Response(serializer.data)
+            queryset, many=True, context={'request': request})
 
+        return Response(serializer.data)
     elif request.method == 'POST':
         serializer = ProductSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response('Everything is OK')
+
+
+@api_view()
+def product_detail(request, pk):
+
+    product = get_object_or_404(
+        Product.objects.select_related('category'), pk=pk)
+
+    serializer = ProductSerializer(
+        product, context={'request': request})  # convert to json
+    return Response(serializer.data)
 
 
 @api_view()
