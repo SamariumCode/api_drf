@@ -28,6 +28,9 @@ class Product(models.Model):
     datetime_modified = models.DateTimeField(auto_now=True)
     discounts = models.ManyToManyField(Discount, blank=True)
 
+    def __str__(self):
+        return self.name
+
 
 class Customer(models.Model):
     first_name = models.CharField(max_length=255)

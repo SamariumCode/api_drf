@@ -45,9 +45,5 @@ class ProductSerializer(serializers.ModelSerializer):
         # Call the parent class's 'create' method to save the object
         return super().create(validated_data)
 
-    # def update(self, instance, validated_data):
 
-    #     instance.inventory = 0
-    #     # instance.inventory = validated_data.get('inventory')
-    #     instance.save()
-    #     return instance
+    
