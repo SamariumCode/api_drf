@@ -7,14 +7,17 @@ from store.models import Category, Product
 
 class CategorySerializer(serializers.ModelSerializer):
 
-    count_category = serializers.SerializerMethodField()
+    # count_category = serializers.SerializerMethodField()
+
+    count_category = serializers.IntegerField(
+        source='products.count', read_only=True)
 
     class Meta:
         model = Category
         fields = ['id', 'title', 'description', 'count_category']
 
-    def get_count_category(self, category: Category):
-        return category.products.count()
+    # def get_count_category(self, category: Category):
+    #     return category.products.count()
 
 
 class ProductSerializer(serializers.ModelSerializer):

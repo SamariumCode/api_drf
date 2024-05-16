@@ -18,7 +18,7 @@ class ProductList(ListCreateAPIView):
     # def get_serializer_class(self):
     #     return ProductSerializer
 
-    queryset = Product.objects.filter(name__istartswith='S').select_related(
+    queryset = Product.objects.order_by('id').select_related(
         'category').prefetch_related('discounts').all()
 
     # def get_queryset(self):
