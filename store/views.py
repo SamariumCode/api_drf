@@ -2,7 +2,7 @@ from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import api_view
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.mixins import CreateModelMixin, ListModelMixin
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -28,21 +28,13 @@ class ProductList(ListCreateAPIView):
         return {'request': self.request}
 
 
-class ProductDetail(APIView):
-    def get(self, request, pk):
-        product = get_object_or_404(
-            Product.objects.select_related('category'), pk=pk)
-        serializer = ProductSerializer(
-            product, context={'request': request})  # convert to json
-        return Response(serializer.data)
+class ProductDetail(RetrieveUpdateDestroyAPIView):
 
-    def put(self, request, pk):
-        product = get_object_or_404(
-            Product.objects.select_related('category'), pk=pk)
-        serializer = ProductSerializer(product, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+    serializer_class = ProductSerializer
+
+    queryset = Product.objects.select_related('category').all()
+
+    # lookup_field = 'id'
 
     def delete(self, request, pk):
         product = get_object_or_404(
@@ -61,25 +53,16 @@ class CategoryList(ListCreateAPIView):
     queryset = queryset = Category.objects.filter().prefetch_related('products').all()
 
 
-class CategoryDetail(APIView):
-    def get(self, request, pk):
-        category = get_object_or_404(Category.objects.filter().annotate(
-            products_count=Count('products')), pk=pk)
-        serializer = CategorySerializer(category)  # convert to json
-        return Response(serializer.data)
+class CategoryDetail(RetrieveUpdateDestroyAPIView):
 
-    def put(self, request, pk):
-        category = get_object_or_404(Category.objects.filter().annotate(
-            products_count=Count('products')), pk=pk)
-        serializer = CategorySerializer(category, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+    serializer_class = CategorySerializer
+
+    queryset = Category.objects.prefetch_related('products').all()
 
     def delete(self, request, pk):
-        category = get_object_or_404(Category.objects.filter().annotate(
-            products_count=Count('products')), pk=pk)
-        if category.products_count > 0:
+        category = get_object_or_404(
+            Category.objects.prefetch_related('products'), pk=pk)
+        if category.products.count() > 0:
             return Response({'error': 'There is some products relating  this category. please remove the first'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         category.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
