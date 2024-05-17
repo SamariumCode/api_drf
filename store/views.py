@@ -6,13 +6,15 @@ from rest_framework.decorators import api_view
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.mixins import CreateModelMixin, ListModelMixin
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
+from .filters import ProductFilter
 from .models import Category, Product, Comment
 from .serializers import ProductSerializer, CategorySerializer, CommentSerializer
-from .filters import ProductFilter
+from .paginations import DefaultPagination
 
 
 class ProductViewSet(ModelViewSet):
@@ -23,6 +25,8 @@ class ProductViewSet(ModelViewSet):
     filterset_class = ProductFilter
     ordering_fields = ['name', 'unit_price']
     search_fields = ['name']
+
+    pagination_class = DefaultPagination
 
     queryset = Product.objects.all()
 
