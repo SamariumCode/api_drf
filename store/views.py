@@ -14,8 +14,19 @@ from .serializers import ProductSerializer, CategorySerializer, CommentSerialize
 
 class ProductViewSet(ModelViewSet):
     serializer_class = ProductSerializer
-    queryset = Product.objects.order_by('id').select_related(
-        'category').prefetch_related('discounts').all()
+
+    def get_queryset(self):
+
+        queryset = Product.objects.all()
+
+        category_id_parameter = self.request.query_params.get('category_id')
+        category_title_parameter = self.request.query_params.get('category_title')
+        if category_id_parameter is not None:
+            queryset = queryset.filter(category__id=category_id_parameter)
+
+        if category_title_parameter is not None:
+            queryset = queryset.filter(category__title__istartswith=category_title_parameter)
+        return queryset
 
     def get_serializer_context(self):
         return {'request': self.request}
@@ -35,7 +46,7 @@ class ProductViewSet(ModelViewSet):
 
 class CategoryViewSet(ModelViewSet):
     serializer_class = CategorySerializer
-    queryset = queryset = Category.objects.filter().prefetch_related('products').all()
+    queryset = Category.objects.filter().prefetch_related('products').all()
 
     def destroy(self, request, pk):
         category = get_object_or_404(
