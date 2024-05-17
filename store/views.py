@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
+from .filters import ProductFilter
 
 from .models import Category, Product, Comment
 from .serializers import ProductSerializer, CategorySerializer, CommentSerializer
@@ -17,7 +18,8 @@ class ProductViewSet(ModelViewSet):
     serializer_class = ProductSerializer
 
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['category_id', 'category__title', 'inventory']
+    # filterset_fields = ['category_id', 'category__title', 'inventory']
+    filterset_class = ProductFilter
 
     queryset = Product.objects.all()
 
