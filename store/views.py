@@ -24,7 +24,8 @@ class ProductViewSet(ModelViewSet):
         product = get_object_or_404(
             Product.objects.select_related('category'), pk=pk)
         if product.order_items.count() > 0:
-            return Response({'error': 'There is some order items including this product please remove the first'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+            return Response({'error': 'There is some order items including this product please remove the first'},
+                            status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
         product = get_object_or_404(
             Product.objects.select_related('category'), pk=pk)
@@ -40,7 +41,8 @@ class CategoryViewSet(ModelViewSet):
         category = get_object_or_404(
             Category.objects.prefetch_related('products'), pk=pk)
         if category.products.count() > 0:
-            return Response({'error': 'There is some products relating  this category. please remove the first'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+            return Response({'error': 'There is some products relating  this category. please remove the first'},
+                            status=status.HTTP_405_METHOD_NOT_ALLOWED)
         category.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -49,7 +51,9 @@ class CommentViewSet(ModelViewSet):
     serializer_class = CommentSerializer
 
     def get_queryset(self):
-
         product_pk = self.kwargs['product_pk']
 
         return Comment.objects.filter(product_id=product_pk).all()
+
+    def get_serializer_context(self):
+        return {'product_pk': self.kwargs['product_pk']}

@@ -2,11 +2,10 @@ from decimal import Decimal
 from django.utils.text import slugify
 from rest_framework import serializers
 
-from store.models import Category, Product, Comment
+from store.models import Category, Product, Comment, Order
 
 
 class CategorySerializer(serializers.ModelSerializer):
-
     # count_category = serializers.SerializerMethodField()
 
     count_category = serializers.IntegerField(
@@ -21,7 +20,6 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-
     title = serializers.CharField(max_length=255, source='name')
     price = serializers.DecimalField(
         max_digits=6, decimal_places=2, source='unit_price')
@@ -38,7 +36,6 @@ class ProductSerializer(serializers.ModelSerializer):
         return round(product.unit_price * Decimal(1.09), 2)
 
     def validate(self, data):
-
         if len(data['name']) < 6:
             raise serializers.ValidationError(
                 'Product Title length shod be at least sex')
@@ -59,4 +56,8 @@ class ProductSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ['id', 'name', 'product', 'body']
+        fields = ['id', 'name', 'body']
+
+    def create(self, validated_data):
+        product_id = self.context['product_pk']
+        return Comment.objects.create(product_id=product_id, **validated_data)
