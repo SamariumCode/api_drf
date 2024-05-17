@@ -1,25 +1,28 @@
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.mixins import CreateModelMixin, ListModelMixin
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
-from django_filters.rest_framework import DjangoFilterBackend
-from .filters import ProductFilter
 
 from .models import Category, Product, Comment
 from .serializers import ProductSerializer, CategorySerializer, CommentSerializer
+from .filters import ProductFilter
 
 
 class ProductViewSet(ModelViewSet):
     serializer_class = ProductSerializer
 
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [SearchFilter, DjangoFilterBackend, OrderingFilter]
     # filterset_fields = ['category_id', 'category__title', 'inventory']
     filterset_class = ProductFilter
+    ordering_fields = ['name', 'unit_price']
+    search_fields = ['name']
 
     queryset = Product.objects.all()
 

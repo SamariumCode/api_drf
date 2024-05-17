@@ -8,5 +8,6 @@ class ProductFilter(FilterSet):
         model = Product
         fields = {
             'inventory': ['lt', 'gt'],
-            'category__title': ['icontains', 'istartswith'],
+            # 'category__title': ['icontains', 'istartswith'],
+            'name': ['startswith'],
         }
