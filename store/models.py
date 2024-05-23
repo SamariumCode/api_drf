@@ -114,3 +114,7 @@ class CartItem(models.Model):
 
     class Meta:
         unique_together = [['cart', 'product']]
+
+# class User(AuthUser):
+#     phone_number
+#     django -> AuthUser -> User
