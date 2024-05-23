@@ -83,7 +83,7 @@ class CartViewSet(CreateModelMixin,
 
 
 class CartItemViewSet(ModelViewSet):
-    serializer_class = CartItemSerializer
+    http_method_names = ['get', 'post', 'patch', 'delete']
 
     def get_queryset(self):
         cart_pk = self.kwargs['cart_pk']
