@@ -70,7 +70,7 @@ class CartProductSerializer(serializers.ModelSerializer):
 
 
 class CartItemSerializer(serializers.ModelSerializer):
-    product = CartProductSerializer(read_only=True)
+    product = CartProductSerializer()
 
     item_total = serializers.SerializerMethodField()
 

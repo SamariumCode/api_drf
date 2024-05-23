@@ -13,9 +13,9 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, GenericViewSet
 
 from .filters import ProductFilter
-from .models import Category, Product, Comment, Cart
-from .serializers import ProductSerializer, CategorySerializer, CommentSerializer, CartSerializer
+from .models import Category, Product, Comment, Cart, CartItem
 from .paginations import DefaultPagination
+from .serializers import ProductSerializer, CategorySerializer, CommentSerializer, CartSerializer, CartItemSerializer
 
 
 class ProductViewSet(ModelViewSet):
@@ -79,3 +79,11 @@ class CartViewSet(CreateModelMixin,
                   GenericViewSet):
     serializer_class = CartSerializer
     queryset = Cart.objects.prefetch_related('items__product').all()
+
+
+class CartItemViewSet(ModelViewSet):
+    serializer_class = CartItemSerializer
+
+    def get_queryset(self):
+        cart_pk = self.kwargs['cart_pk']
+        return CartItem.objects.select_related('product').filter(cart_id=cart_pk).all()
