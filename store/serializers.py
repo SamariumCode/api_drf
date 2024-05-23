@@ -64,8 +64,9 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class CartSerializer(serializers.ModelSerializer):
-    id = serializers.UUIDField(source='pk', read_only=True)
+    # id = serializers.UUIDField(source='pk', read_only=True)
 
     class Meta:
         model = Cart
         fields = ['id', ]
+        read_only_fields = ['id', ]

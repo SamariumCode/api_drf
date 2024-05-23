@@ -6,10 +6,11 @@ from rest_framework.decorators import api_view
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.mixins import CreateModelMixin, ListModelMixin
+from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, GenericViewSet
 
 from .filters import ProductFilter
 from .models import Category, Product, Comment, Cart
@@ -72,6 +73,8 @@ class CommentViewSet(ModelViewSet):
         return {'product_pk': self.kwargs['product_pk']}
 
 
-class CartViewSet(ModelViewSet):
+class CartViewSet(CreateModelMixin,
+                  RetrieveModelMixin,
+                  GenericViewSet):
     serializer_class = CartSerializer
     queryset = Cart.objects.all()
