@@ -12,8 +12,8 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from .filters import ProductFilter
-from .models import Category, Product, Comment
-from .serializers import ProductSerializer, CategorySerializer, CommentSerializer
+from .models import Category, Product, Comment, Cart
+from .serializers import ProductSerializer, CategorySerializer, CommentSerializer, CartSerializer
 from .paginations import DefaultPagination
 
 
@@ -70,3 +70,7 @@ class CommentViewSet(ModelViewSet):
 
     def get_serializer_context(self):
         return {'product_pk': self.kwargs['product_pk']}
+
+
+# class CartViewSet(ModelViewSet):
+#     serializer_class =
