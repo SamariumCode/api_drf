@@ -6,6 +6,7 @@ from django.utils.html import format_html
 from django.utils.http import urlencode
 
 from . import models
+from .models import CartItem
 
 
 class InventoryFilter(admin.SimpleListFilter):
@@ -186,3 +187,16 @@ class CategoryAdmin(admin.ModelAdmin):
 @admin.register(models.Discount)
 class DiscountAdmin(admin.ModelAdmin):
     pass
+
+
+class CartItemInline(admin.TabularInline):
+    model = CartItem
+    fields = ('id', 'product', 'quantity',)
+    extra = 0
+    min_num = 1
+
+
+@admin.register(models.Cart)
+class CartAdmin(admin.ModelAdmin):
+    list_display = ['id', 'created_at']
+    inlines = [CartItemInline]

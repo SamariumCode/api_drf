@@ -72,5 +72,6 @@ class CommentViewSet(ModelViewSet):
         return {'product_pk': self.kwargs['product_pk']}
 
 
-# class CartViewSet(ModelViewSet):
-#     serializer_class =
+class CartViewSet(ModelViewSet):
+    serializer_class = CartSerializer
+    queryset = Cart.objects.all()
