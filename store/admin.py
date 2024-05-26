@@ -111,20 +111,29 @@ class ProductAdmin(admin.ModelAdmin):
 class CustomerAdmin(admin.ModelAdmin):
     list_display = ['first_name', 'last_name', 'email']
     list_per_page = 5
-    ordering = ['first_name', 'last_name', ]
-    search_fields = ['first_name__istartswith', 'last_name__istartswith', ]
+    ordering = ['user__first_name', 'user__last_name', ]
+    search_fields = ['user__first_name__istartswith', 'user__last_name__istartswith', ]
     actions = ['uppercase', 'lowercase']
+
+    def first_name(self, customer):
+        return customer.user.first_name
+
+    def last_name(self, customer):
+        return customer.user.last_name
+
+    def email(self, customer):
+        return customer.user.email
 
     @admin.action(description='Make Selected Upper first name')
     def uppercase(self, request, queryset):
         for obj in queryset:
-            obj.first_name = obj.first_name.upper()
+            obj.user.first_name = obj.user.first_name.upper()
             obj.save()
 
     @admin.action(description='Make Selected Lower first name')
     def lowercase(self, request, queryset):
         for obj in queryset:
-            obj.first_name = obj.first_name.lower()
+            obj.user.first_name = obj.user.first_name.lower()
             obj.save()
 
 
