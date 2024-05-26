@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.db import models
 from uuid import uuid4
 
@@ -36,6 +37,7 @@ class Product(models.Model):
 
 class Customer(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    # user = models.OneToOneField(get_user_model(), on_delete=models.PROTECT)
     phone_number = models.CharField(max_length=255)
     birth_date = models.DateField(null=True, blank=True)
 
