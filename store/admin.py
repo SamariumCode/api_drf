@@ -115,11 +115,11 @@ class CustomerAdmin(admin.ModelAdmin):
     search_fields = ['user__first_name__istartswith', 'user__last_name__istartswith', ]
     actions = ['uppercase', 'lowercase']
 
-    def first_name(self, customer):
-        return customer.user.first_name
-
-    def last_name(self, customer):
-        return customer.user.last_name
+    # def first_name(self, customer):
+    #     return customer.first_name
+    #
+    # def last_name(self, customer):
+    #     return customer.last_name
 
     def email(self, customer):
         return customer.user.email
