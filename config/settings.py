@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django_filters',
     'debug_toolbar',
     'rest_framework',
+    'djoser',
 
     'store',
     'core',
@@ -135,6 +136,13 @@ REST_FRAMEWORK = {
     'COERCE_DECIMAL_TO_STRING': False,
     # 'PAGE_SIZE': 5,
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('JWT',),
 }
 
 AUTH_USER_MODEL = 'core.CustomUser'
