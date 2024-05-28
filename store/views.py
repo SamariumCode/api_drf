@@ -12,14 +12,14 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, GenericViewSet
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny, DjangoModelPermissions
 
 from .filters import ProductFilter
 from .models import Category, Product, Comment, Cart, CartItem, Customer
 from .paginations import DefaultPagination
 from .serializers import ProductSerializer, CategorySerializer, CommentSerializer, CartSerializer, CartItemSerializer, \
     AddCartItemSerializer, UpdateCartItemSerializer, CustomerSerializer
-from .permissions import IsAdminOrReadOnly, SendPrivateEmail
+from .permissions import IsAdminOrReadOnly, SendPrivateEmail, CustomDjangoModelPermissions
 
 
 class ProductViewSet(ModelViewSet):
@@ -32,6 +32,7 @@ class ProductViewSet(ModelViewSet):
     search_fields = ['name']
 
     pagination_class = DefaultPagination
+    permission_classes = [CustomDjangoModelPermissions]
 
     queryset = Product.objects.all()
 
