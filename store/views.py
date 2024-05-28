@@ -13,10 +13,10 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, GenericViewSet
 
 from .filters import ProductFilter
-from .models import Category, Product, Comment, Cart, CartItem
+from .models import Category, Product, Comment, Cart, CartItem, Customer
 from .paginations import DefaultPagination
 from .serializers import ProductSerializer, CategorySerializer, CommentSerializer, CartSerializer, CartItemSerializer, \
-    AddCartItemSerializer, UpdateCartItemSerializer
+    AddCartItemSerializer, UpdateCartItemSerializer, CustomerSerializer
 
 
 class ProductViewSet(ModelViewSet):
@@ -99,3 +99,8 @@ class CartItemViewSet(ModelViewSet):
 
     def get_serializer_context(self):
         return {'cart_pk': self.kwargs['cart_pk']}
+
+
+class CustomerViewSet(ModelViewSet):
+    serializer_class = CustomerSerializer
+    queryset = Customer.objects.all()
