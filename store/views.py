@@ -15,6 +15,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny, DjangoModelPermissions
 
 from .filters import ProductFilter
+from .signals import order_created
 from .models import Category, Order, Product, Comment, Cart, CartItem, Customer, OrderItem
 from .paginations import DefaultPagination
 from .serializers import ProductSerializer, CategorySerializer, CommentSerializer, CartSerializer, CartItemSerializer, \
@@ -184,6 +185,8 @@ class OrderViewSet(ModelViewSet):
             data=request.data, context={'user_id': self.request.user.id})
         create_order_serializer.is_valid(raise_exception=True)
         create_order = create_order_serializer.save()
+
+        order_created.send_robust(self.__class__, order=create_order)
 
         serializer = OrderSerializer(create_order)
         return Response(serializer.data)
