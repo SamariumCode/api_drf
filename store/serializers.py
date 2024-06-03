@@ -209,4 +209,27 @@ class OrderCreateSerializer(serializers.Serializer):
 
         customer = Customer.objects.get(user_id=user_id)
 
-        print(f'{cart_id=}  {customer.first_name=}')
+        # print(f'{cart_id=}  {customer.first_name=}')
+
+        order = Order()
+        order.customer = customer
+        order.save()
+
+        cart_items = CartItem.objects.select_related(
+            'product').filter(cart_id=cart_id)
+
+        order_items = []
+
+        for item in cart_items:
+            order_item = OrderItem()
+            order_item.order = order
+            order_item.product_id = cart_items.product_id
+            order_item.unit_price = cart_items.product.unit_price
+            order_item.quantity = cart_items.quantity
+            order_items.append(order_item)
+
+        OrderItem.objects.bulk_create(order_items)
+
+        Cart.objects.get(id=cart_id).delete()
+
+        return order
