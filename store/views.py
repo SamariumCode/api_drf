@@ -18,7 +18,7 @@ from .filters import ProductFilter
 from .models import Category, Order, Product, Comment, Cart, CartItem, Customer, OrderItem
 from .paginations import DefaultPagination
 from .serializers import ProductSerializer, CategorySerializer, CommentSerializer, CartSerializer, CartItemSerializer, \
-    AddCartItemSerializer, UpdateCartItemSerializer, CustomerSerializer, OrderSerializer, OredrItemSerializer
+    AddCartItemSerializer, UpdateCartItemSerializer, CustomerSerializer, OrderSerializer, OredrItemSerializer, OrderForAdminSerializer
 from .permissions import IsAdminOrReadOnly, SendPrivateEmail, CustomDjangoModelPermissions
 
 
@@ -133,10 +133,12 @@ class CustomerViewSet(ModelViewSet):
 
 
 class OrderViewSet(ModelViewSet):
-    serializer_class = OrderSerializer
+    # serializer_class = OrderSerializer
+
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Order.objects.prefetch_related(
+        queryset = Order.objects.prefetch_related(
 
             Prefetch(
 
@@ -148,3 +150,14 @@ class OrderViewSet(ModelViewSet):
             )
 
         ).select_related('customer__user').all()
+
+        user = self.request.user
+
+        if user.is_staff:
+            return queryset
+        return queryset.filter(customer__user_id=user.id)
+
+    def get_serializer_class(self):
+        if self.request.user.is_staff:
+            return OrderForAdminSerializer
+        return OrderSerializer

@@ -162,7 +162,7 @@ class OrderCustomerSeializer(serializers.ModelSerializer):
         fields = ['id', 'first_name', 'last_name', 'email']
 
 
-class OrderSerializer(serializers.ModelSerializer):
+class OrderForAdminSerializer(serializers.ModelSerializer):
 
     items = OredrItemSerializer(many=True)
 
@@ -171,3 +171,12 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ['id', 'customer', 'status', 'datetime_created', 'items']
+
+
+class OrderSerializer(serializers.ModelSerializer):
+
+    items = OredrItemSerializer(many=True)
+
+    class Meta:
+        model = Order
+        fields = ['customer', 'status', 'datetime_created', 'items']
