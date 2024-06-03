@@ -150,10 +150,24 @@ class OredrItemSerializer(serializers.ModelSerializer):
         fields = ['id', 'product', 'quantity', 'unit_price']
 
 
+class OrderCustomerSeializer(serializers.ModelSerializer):
+    first_name = serializers.CharField(
+        max_length=255, source='user.first_name')
+    last_name = serializers.CharField(
+        max_length=255, source='user.last_name')
+    email = serializers.EmailField(source='user.email')
+
+    class Meta:
+        model = Customer
+        fields = ['id', 'first_name', 'last_name', 'email']
+
+
 class OrderSerializer(serializers.ModelSerializer):
 
     items = OredrItemSerializer(many=True)
 
+    customer = OrderCustomerSeializer()
+
     class Meta:
         model = Order
-        fields = ['id', 'customer_id', 'status', 'datetime_created', 'items']
+        fields = ['id', 'customer', 'status', 'datetime_created', 'items']

@@ -141,9 +141,10 @@ class OrderViewSet(ModelViewSet):
             Prefetch(
 
                 'items',
-                queryset=OrderItem.objects.select_related('product'),
+                queryset=OrderItem.objects.select_related(
+                    'product'),
 
 
             )
 
-        ).all()
+        ).select_related('customer__user').all()
