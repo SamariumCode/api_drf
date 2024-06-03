@@ -36,7 +36,8 @@ class Product(models.Model):
 
 
 class Customer(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     # user = models.OneToOneField(get_user_model(), on_delete=models.PROTECT)
     phone_number = models.CharField(max_length=255)
     birth_date = models.DateField(null=True, blank=True)
@@ -58,6 +59,9 @@ class Customer(models.Model):
             ('send_private_email', 'Can send private email to user by the button'),
 
         )
+
+    def __str__(self):
+        return self.user.first_name
 
 
 class Address(models.Model):

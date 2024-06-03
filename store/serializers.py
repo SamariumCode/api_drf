@@ -2,7 +2,7 @@ from decimal import Decimal
 from django.utils.text import slugify
 from rest_framework import serializers
 
-from store.models import Category, Product, Comment, Order, Cart, CartItem, Customer
+from store.models import Category, Product, Comment, Order, OrderItem,  Cart, CartItem, Customer
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -87,11 +87,13 @@ class AddCartItemSerializer(serializers.ModelSerializer):
         quantity = validated_data.get('quantity')
 
         try:
-            cart_item = CartItem.objects.get(cart_id=cart_id, product_id=product.id)
+            cart_item = CartItem.objects.get(
+                cart_id=cart_id, product_id=product.id)
             cart_item.quantity += quantity
             cart_item.save()
         except CartItem.DoesNotExist:
-            cart_item = CartItem.objects.create(cart_id=cart_id, **validated_data)
+            cart_item = CartItem.objects.create(
+                cart_id=cart_id, **validated_data)
 
         self.instance = cart_item
 
@@ -131,3 +133,27 @@ class CustomerSerializer(serializers.ModelSerializer):
         model = Customer
         fields = ['id', 'user', 'birth_date']
         read_only_fields = ['user']
+
+
+class OrderItemProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ['id', 'name', 'unit_price']
+
+
+class OredrItemSerializer(serializers.ModelSerializer):
+
+    product = OrderItemProductSerializer()
+
+    class Meta:
+        model = OrderItem
+        fields = ['id', 'product', 'quantity', 'unit_price']
+
+
+class OrderSerializer(serializers.ModelSerializer):
+
+    items = OredrItemSerializer(many=True)
+
+    class Meta:
+        model = Order
+        fields = ['id', 'customer_id', 'status', 'datetime_created', 'items']
