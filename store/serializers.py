@@ -180,3 +180,33 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ['customer', 'status', 'datetime_created', 'items']
+
+
+class OrderCreateSerializer(serializers.Serializer):
+    cart_id = serializers.UUIDField()
+
+    def validate_cart_id(self, cart_id):
+
+        # try:
+        #     if Cart.objects.prefetch_related('items').get(id=cart_id).items.count() == 0:
+        #         raise serializers.ValidationError(
+        #             'Your cart is empty. Please add some product to it first')
+        # except Cart.DoesNotExist:
+        #     raise serializers.ValidationError(
+        #         'There is no cart with this cart id')
+
+        if not Cart.objects.filter(id=cart_id).exists():
+            raise serializers.ValidationError(
+                'There is no cart with this cart id')
+        if CartItem.objects.filter(cart_id=cart_id).count() == 0:
+            raise serializers.ValidationError(
+                'Your cart is empty. Please add some product to it first')
+        return cart_id
+
+    def save(self, **kwargs):
+        cart_id = self.validated_data['cart_id']
+        user_id = self.context['user_id']
+
+        customer = Customer.objects.get(user_id=user_id)
+
+        print(f'{cart_id=}  {customer.first_name=}')
