@@ -1,4 +1,4 @@
-from django.db.models import Count
+from django.db.models import Count, Prefetch
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
@@ -15,7 +15,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny, DjangoModelPermissions
 
 from .filters import ProductFilter
-from .models import Category, Order, Product, Comment, Cart, CartItem, Customer
+from .models import Category, Order, Product, Comment, Cart, CartItem, Customer, OrderItem
 from .paginations import DefaultPagination
 from .serializers import ProductSerializer, CategorySerializer, CommentSerializer, CartSerializer, CartItemSerializer, \
     AddCartItemSerializer, UpdateCartItemSerializer, CustomerSerializer, OrderSerializer, OredrItemSerializer
@@ -134,4 +134,16 @@ class CustomerViewSet(ModelViewSet):
 
 class OrderViewSet(ModelViewSet):
     serializer_class = OrderSerializer
-    queryset = Order.objects.all()
+
+    def get_queryset(self):
+        return Order.objects.prefetch_related(
+
+            Prefetch(
+
+                'items',
+                queryset=OrderItem.objects.select_related('product'),
+
+
+            )
+
+        ).all()
